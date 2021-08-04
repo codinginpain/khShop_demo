@@ -1,0 +1,33 @@
+
+
+firebase 기능 탐방
+1. firebase project 생성
+2. Authentication 설정
+3. data base north east asia3 - maybe seoul
+4. storage
+5 hosting.
+
+
+firebase tools 설치 및 index.html
+1.node install -g firebase-tools@9.12.1
+2. firebase login
+3. firebase init
+ -> 사용기능 마크하기(방향키+스페이스바) firestore, hosting, storage
+4. 나머지는 기본 설정 사용하면 됨
+5. index file 상단에 js 파일들 필요한것만 남기고 삭제후 index.html 파일 만들어서 복붙 ㄱ
+6. 파이어베이스 콘솔에서 ios,android,web 중에 골라서 앱생성하고 script 복사해서 추가
+7. firebase serve 치면 서버 실행
+8. 부투스트랩 css, js, jquery cdn 추가
+9. 부투스트랩 nav bar 검색해서 아무거나 1개 추가
+10. 콘솔에서 firestore 콜렉션 생성
+11. firebase not defined 뜨면 cdn에서 defer 지워주면댐
+12. db rules 들어가서 권한 줘야함
+13. db 연결해서 get 써봄
+
+
+
+upload.html
+firebase cdn 다 포함 시켜줘야함
+doc.set 보단 add를 써서 이름에 자유도를 주는게 더 좋음
+
+
