@@ -9,7 +9,7 @@ firebase 기능 탐방
 
 
 firebase tools 설치 및 index.html
-1.node install -g firebase-tools@9.12.1
+1.npm install -g firebase-tools@9.12.1
 2. firebase login
 3. firebase init
  -> 사용기능 마크하기(방향키+스페이스바) firestore, hosting, storage
