@@ -59,10 +59,9 @@
 
   <div class="container mt-3">
     <input type="text" class="form-control mt-2" id="title" placeholder="title">
-    <textarea class="form-control mt-2" id="content" placeholder="content"></textarea>
+    <textarea class="form-control mt-2" id="content">content</textarea>
     <input type="text" class="form-control mt-2" id="price" placeholder="price">
-    <input class="form-control mt-2" type="file" id="image">
-    <button class="btn btn-danger mt-3" id="send">올리기</button>
+    <button class="btn btn-danger mt-3" id="send">수정하기</button>
   </div>
 
 
@@ -70,50 +69,29 @@
     const db = firebase.firestore();
     // db.collection('product').doc('product3').set({name: 'toilet'}); //product3 이름설정
     // db.collection('product').add({name: 'toilet'}); //add 하면 자동으로 이름부여 -> 이방법이 나음
-
     const storage = firebase.storage();
 
-    $('#send').click(function() {
+    var queryString = new URLSearchParams(window.location.search);
 
-        var file = document.querySelector('#image').files[0];
-        var storageRef = storage.ref();
-        var savePath = storageRef.child('image/' + file.name);
-        var uploadWork = savePath.put(file);
-
-        uploadWork.on('stage_changed', 
-        // 변화 시 동작 하는 함수
-        null,
-        
-        //에러 시 동작 하는 함수
-        (error) => {
-          console.error('error reason', error);
-        },
-        
-        //성공 시 동작하는 함수
-        () => {
-          uploadWork.snapshot.ref.getDownloadURL().then((url) => {
-            console.log('upload path', url);
-
-
-            var newProduct = {
-              name: $('#title').val(),
-              price: $('#price').val(),
-              content: $('#content').val(),
-              date: new Date(),
-              image: url,
-              uid: JSON.parse(localStorage.getItem('user')).uid,
-              userName: JSON.parse(localStorage.getItem('user')).displayName,
-            }
-            db.collection('product').add(newProduct).then((result) => {
-                console.log(result);
-                window.location.href = "/index.html";
-            }).catch((err) => {
-                console.log(err);
-            });
-
-          })
-        })
+    db.collection('product').doc(queryString.get('id')).get().then((result) => {
+        var data = result.data();
+        console.log(result);
+        console.log(data);
+        $('#title').val(data.name);
+        $('#content').val(data.content);
+        $('#price').val(data.price);
     })
+
+
+    $('#send').click(function() {
+        var newData = {
+        name: $('#title').val(),
+        price: $('#price').val(),
+    }
+
+    db.collection('product').doc(queryString.get('id')).update(newData);
+    });
+
 
 
 

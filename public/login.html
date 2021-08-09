@@ -10,6 +10,9 @@
 </head>
 <body>
 
+    
+
+
 
   <script src="/__/firebase/8.8.1/firebase-app.js"></script>
   <script src="/__/firebase/8.8.1/firebase-auth.js"></script>
@@ -34,8 +37,10 @@
   </script>
 
 
+
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">KH Shop</a>
+    <span class="ms-auto mx-2" id="userName"></span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -58,64 +63,80 @@
   </nav>
 
   <div class="container mt-3">
-    <input type="text" class="form-control mt-2" id="title" placeholder="title">
-    <textarea class="form-control mt-2" id="content" placeholder="content"></textarea>
-    <input type="text" class="form-control mt-2" id="price" placeholder="price">
-    <input class="form-control mt-2" type="file" id="image">
-    <button class="btn btn-danger mt-3" id="send">올리기</button>
-  </div>
+    <div class="mb-3">
+      <input type="text" class="form-control" placeholder="name" id="name-new">
+    </div>
+    <div class="mb-3">
+      <input type="email" class="form-control" placeholder="email" id="email-new">
+    </div>
+    <div class="mb-3">
+      <input type="password" class="form-control" placeholder="pw" id="pw-new">
+    </div>
+    <button type="submit" class="btn btn-primary" id="register">가입하기</button>
+ </div>
+
+ <div class="container mt-3">
+    <div class="mb-3">
+      <input type="email" class="form-control" placeholder="email" id="email">
+    </div>
+    <div class="mb-3">
+      <input type="password" class="form-control" placeholder="pw" id="pw">
+    </div>
+    <button type="submit" class="btn btn-primary" id="login">Login</button>
+    <button type="submit" class="btn btn-primary" id="logout">Logout</button>
+ </div>
 
 
   <script>
     const db = firebase.firestore();
-    // db.collection('product').doc('product3').set({name: 'toilet'}); //product3 이름설정
-    // db.collection('product').add({name: 'toilet'}); //add 하면 자동으로 이름부여 -> 이방법이 나음
-
     const storage = firebase.storage();
 
-    $('#send').click(function() {
+    //유저정보 확인
+    var extractedUserInfo = localStorage.getItem('user');
+    JSON.parse(extractedUserInfo);
+    // $('#userName').html(JSON.parse(extractedUserInfo).displayName);
 
-        var file = document.querySelector('#image').files[0];
-        var storageRef = storage.ref();
-        var savePath = storageRef.child('image/' + file.name);
-        var uploadWork = savePath.put(file);
+    firebase.auth().onAuthStateChanged((user) => { //로그인시, 로그아웃시, 새로고침시 실행됨
+        if(user) {
+            console.log(user.uid);
+            console.log(user.displayName);
+            localStorage.setItem('user', JSON.stringify(user));
+        }
 
-        uploadWork.on('stage_changed', 
-        // 변화 시 동작 하는 함수
-        null,
-        
-        //에러 시 동작 하는 함수
-        (error) => {
-          console.error('error reason', error);
-        },
-        
-        //성공 시 동작하는 함수
-        () => {
-          uploadWork.snapshot.ref.getDownloadURL().then((url) => {
-            console.log('upload path', url);
+    })
 
+    $('#login').click(function() {
 
-            var newProduct = {
-              name: $('#title').val(),
-              price: $('#price').val(),
-              content: $('#content').val(),
-              date: new Date(),
-              image: url,
-              uid: JSON.parse(localStorage.getItem('user')).uid,
-              userName: JSON.parse(localStorage.getItem('user')).displayName,
-            }
-            db.collection('product').add(newProduct).then((result) => {
-                console.log(result);
-                window.location.href = "/index.html";
-            }).catch((err) => {
-                console.log(err);
-            });
+        var email = $('#email').val();
+        var password = $('#pw').val();
 
-          })
+        firebase.auth().signInWithEmailAndPassword(email, password).then((result) => {
+            console.log(result.user);
         })
     })
 
+    $('#logout').click(function() {
+        firebase.auth().signOut();
+        localStorage.removeItem('user');
+    })
 
+    $('#register').click(function() {
+
+        var email = $('#email-new').val();
+        var password = $('#pw-new').val();
+        var name = $('#name-new').val();
+
+        firebase.auth().createUserWithEmailAndPassword(email, password).then((result) => {
+
+          var userInformation = {
+            name: name,
+            email: email,
+          }
+          db.collection('user').doc(result.user.uid).set(userInformation);
+
+          result.user.updateProfile( {displayName: (name)} )
+        })
+    })
 
   </script>
 

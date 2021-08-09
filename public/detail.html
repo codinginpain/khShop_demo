@@ -10,6 +10,9 @@
 </head>
 <body>
 
+    
+
+
 
   <script src="/__/firebase/8.8.1/firebase-app.js"></script>
   <script src="/__/firebase/8.8.1/firebase-auth.js"></script>
@@ -32,6 +35,7 @@
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
   </script>
+
 
 
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -57,65 +61,43 @@
     </div>
   </nav>
 
-  <div class="container mt-3">
-    <input type="text" class="form-control mt-2" id="title" placeholder="title">
-    <textarea class="form-control mt-2" id="content" placeholder="content"></textarea>
-    <input type="text" class="form-control mt-2" id="price" placeholder="price">
-    <input class="form-control mt-2" type="file" id="image">
-    <button class="btn btn-danger mt-3" id="send">올리기</button>
-  </div>
+  <div class="container">
+    <div class="detail-pic my-4"></div>
+    <div>
+        <h5 class="author">올린사람 : 모름</h5>
+        <hr>
+        <h5 class="title"></h5>
+        <p class="date"></p>
+        <p class="price"></p>
+    </div>
+    <button class="btn btn-outline-secondary" id="edit">수정</button>
+    <button class="btn btn-outline-secondary" id="chat">채팅</button>
+</div>
+
 
 
   <script>
     const db = firebase.firestore();
-    // db.collection('product').doc('product3').set({name: 'toilet'}); //product3 이름설정
-    // db.collection('product').add({name: 'toilet'}); //add 하면 자동으로 이름부여 -> 이방법이 나음
-
     const storage = firebase.storage();
 
-    $('#send').click(function() {
+    var queryString = new URLSearchParams(window.location.search);
+    
+    db.collection('product').doc(queryString.get('id')).get().then((result) => {
 
-        var file = document.querySelector('#image').files[0];
-        var storageRef = storage.ref();
-        var savePath = storageRef.child('image/' + file.name);
-        var uploadWork = savePath.put(file);
+        var data = result.data();
+        console.log(data);
+          $('.author').html(`올린사람: ${data.userName}`);
+          $('.title').html(data.name);
+          $('.date').html(data.date);
+          $('.price').html(data.price);
+          $('.detail-pic').css('background-image', `url(${data.image})`);
+    });
 
-        uploadWork.on('stage_changed', 
-        // 변화 시 동작 하는 함수
-        null,
-        
-        //에러 시 동작 하는 함수
-        (error) => {
-          console.error('error reason', error);
-        },
-        
-        //성공 시 동작하는 함수
-        () => {
-          uploadWork.snapshot.ref.getDownloadURL().then((url) => {
-            console.log('upload path', url);
-
-
-            var newProduct = {
-              name: $('#title').val(),
-              price: $('#price').val(),
-              content: $('#content').val(),
-              date: new Date(),
-              image: url,
-              uid: JSON.parse(localStorage.getItem('user')).uid,
-              userName: JSON.parse(localStorage.getItem('user')).displayName,
-            }
-            db.collection('product').add(newProduct).then((result) => {
-                console.log(result);
-                window.location.href = "/index.html";
-            }).catch((err) => {
-                console.log(err);
-            });
-
-          })
-        })
+    $('#edit').click(function() {
+      window.location.href = `/edit.html?${queryString}`;
     })
 
-
+ 
 
   </script>
 
