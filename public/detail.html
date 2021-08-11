@@ -67,6 +67,7 @@
         <h5 class="author">올린사람 : 모름</h5>
         <hr>
         <h5 class="title"></h5>
+        <p class="content"></p>
         <p class="date"></p>
         <p class="price"></p>
     </div>
@@ -80,14 +81,30 @@
     const db = firebase.firestore();
     const storage = firebase.storage();
 
+    var myId = JSON.parse(localStorage.getItem('user')).uid;
+    $('#chat').click(function() {
+      var data = {
+        participants: [myId, sellerId],
+        product: product,
+        date: new Date(),
+      }
+      db.collection('chatroom').add(data);
+    })
+
+    var sellerId;
+    var product;
+
     var queryString = new URLSearchParams(window.location.search);
     
     db.collection('product').doc(queryString.get('id')).get().then((result) => {
 
         var data = result.data();
+        sellerId = data.uid;
+        product = data.name;
         console.log(data);
           $('.author').html(`올린사람: ${data.userName}`);
           $('.title').html(data.name);
+          $('.content').html(data.content);
           $('.date').html(data.date);
           $('.price').html(data.price);
           $('.detail-pic').css('background-image', `url(${data.image})`);
@@ -96,6 +113,8 @@
     $('#edit').click(function() {
       window.location.href = `/edit.html?${queryString}`;
     })
+
+    
 
  
 
