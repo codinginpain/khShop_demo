@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+  <link href="main.css" rel="stylesheet">
+</head>
+<body>
+
+    
+
+
+
+  <script src="/__/firebase/8.8.1/firebase-app.js"></script>
+  <script src="/__/firebase/8.8.1/firebase-auth.js"></script>
+  <script src="/__/firebase/8.8.1/firebase-firestore.js"></script>
+  <script src="/__/firebase/8.8.1/firebase-storage.js"></script>
+  <script src="/__/firebase/8.8.1/firebase-analytics.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyDa1gi_qAra09Mybzz4nXOOy1MenKpwUaM",
+      authDomain: "khshop-96ae1.firebaseapp.com",
+      projectId: "khshop-96ae1",
+      storageBucket: "khshop-96ae1.appspot.com",
+      messagingSenderId: "712964111376",
+      appId: "1:712964111376:web:6d340075fb36bbc4945e95",
+      measurementId: "G-7QFXGSLZCG"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
+
+
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">KH Shop</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container p-4 detail">
+    <div class="row">
+      <div class="col-3 p-0">
+        <ul class="list-group chat-list">
+          <li class="list-group-item">
+            <h6>채팅방1</h6>
+            <h6 class="text-small">채팅방아이디</h6>
+          </li>
+        </ul>
+      </div>
+      <div class="col-9 p-0">
+        <div class="chat-room">
+          <ul class="list-group chat-content">
+            <li><span class="chat-box">채팅방1 내용</span></li>
+            <li><span class="chat-box">채팅방1 내용</span></li>
+            <li><span class="chat-box mine">채팅방1 내용</span></li>
+          </ul>
+          <div class="input-group">
+            <input class="form-control" id="chat-input">
+            <button class="btn btn-secondary" id="send">전송</button>
+          </div>
+        </div>
+      </div>
+    </div>
+ </div> 
+
+  <script>
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    var myId = JSON.parse(localStorage.getItem('user')).uid;
+    
+
+    $('#send').click(function() {
+        var data = {
+            content: $("#chat-input").val(),
+            date: new Date(),
+            uid: myId,
+        }
+        db.collection('chatroom').doc(chatroomId).collection('messages').add({data})
+    })
+
+
+    var chatroomId;
+    // db.collection('chatroom').where('필드', '연산자', '값').get().then()
+    db.collection('chatroom').where('participants', 'array-contains', myId).get().then((result) => {
+        result.forEach((a) => {
+            console.log(a.data());
+            var template = `
+                            <li class="list-group-item">
+                                <h6>${ a.data().product }방</h6>
+                                <h6 class="text-small">${a.id}</h6>
+                            </li>
+                           `;
+            $('.chat-list').append(template);
+
+            $('.list-group-item').click(function() {
+                chatroomId = $(this).children('.text-small').text();
+            })
+        })
+    })
+
+
+    
+
+ 
+
+  </script>
+
+
+</body>
+</html>
