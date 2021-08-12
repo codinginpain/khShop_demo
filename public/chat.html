@@ -116,8 +116,26 @@
                            `;
             $('.chat-list').append(template);
 
-            $('.list-group-item').click(function() {
+            $('.list-group-item').click(function(e) {
                 chatroomId = $(this).children('.text-small').text();
+
+                e.stopImmediatePropagation();
+                
+
+                // db.collection('chatroom').doc(chatroomId).collection('messages').get().then((result) =>  { use below code, then you will see real time changes
+                db.collection('chatroom').doc(chatroomId).collection('messages').orderBy('data.date').onSnapshot((result) =>  { 
+                  console.log('비우기전');
+                  $('.chat-content').html('');
+                  console.log('반복전');
+                  console.log('result', result);
+                
+                  result.forEach((a) => {
+                    console.log('반복실행');
+                    console.log('a', a.data());
+                    var template = `<li><span class="chat-box">${a.data().data.content}</span></li>`;
+                    $('.chat-content').append(template);
+                  })
+                })
             })
         })
     })
