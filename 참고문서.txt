@@ -31,3 +31,8 @@ firebase cdn 다 포함 시켜줘야함
 doc.set 보단 add를 써서 이름에 자유도를 주는게 더 좋음
 
 
+현재 보고있는 documents에서 다른 document의 자료를 가져오려면 get을 사용(덤으로 get대신 exits도 다른 용도로 사용가능 확인해야함)
+firebase database $(database) 룰 설정시 위와 같은 변수를 사용하는 이유는
+firebase에 database를 여러개 만들 수 있는데 그때 마다 이름이 다름 지금은 KHshop인가 그럼.
+그럼 그 해당 데이터베이스의 이름을 변수로 가져오기 위해서 저 변수를 이용해서 사용함
+
