@@ -36,3 +36,40 @@ firebase database $(database) 룰 설정시 위와 같은 변수를 사용하는
 firebase에 database를 여러개 만들 수 있는데 그때 마다 이름이 다름 지금은 KHshop인가 그럼.
 그럼 그 해당 데이터베이스의 이름을 변수로 가져오기 위해서 저 변수를 이용해서 사용함
 
+vaildation 설정을 db에다가 다 박아서 체크 후 insert 되게 가능함
+
+
+
+firebase를 활용한 hosting deploying
+
+발행할 프로젝트 선택
+$ firebase projects:list
+list에서 project id를 찾아서
+$ firebase use ${projectID}
+
+발행하려면
+$ firebase deploy --only hosting
+terminal에 hosting url 로 접속하면 접속가능
+에러가 있다면 폴드 전체를 백업해놓고 firebase init을 해서 hosting을 선택 해주고 다시 하면 됨
+
+firebase console hosting menu 여러가지 호스팅 관련 설정 가능, 자기 도메인이 있으면 그것도 사용 가능
+
+hosting 외에 다른것들도 deploy가 가능함
+firestore.rules 파일 editor(vsc)에서 열어서 수정후 deploy가능함(firebase console에서 코딩 하기 귀찮다면..)
+
+$ firebase deploy --only firestore
+storage.rules도 비슷
+
+update 하고 싶을 때는 그냥 deploy 해버리면 업데이트 된거임.
+다만 테스트용으로 먼저 테스트 deploy를 해보고 싶다면
+
+$ firebase hosting:channel:deploy version1 --expires 7d
+version1 이라는 이름(custom 가능)으로 test deploy(일명 preview channel)를 하고 이 호스팅은 7일뒤 자동 삭제
+
+url 까먹을시 firebase console 들어가면 볼 수 있음
+
+preview channel 을 live channel로 옮기고 싶다면
+$ firebase hosting:clone ${projectID}:${veersionName} ${projectID}:live
+projectID는 위 방법으로 찾고 version은 version1 처럼 해당 version 입력 하면 댐
+
+혹은 그냥 deploy 새로 해버리면 끝
