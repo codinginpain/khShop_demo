@@ -10,7 +10,7 @@ admin.initializeApp({
 
 
 
-console.log('콘솔 테스츠as'); 
+console.log('콘솔 테스츠aaaas'); 
 const db = admin.firestore();
 
 exports.helloWorld = functions.region('asia-northeast3').https.onRequest((request, response) => {
